@@ -1,12 +1,11 @@
 package co.com.juanjogv.lms.application.usecase.book.impl;
 
-import co.com.juanjogv.lms.application.dto.AddBookRequest;
+import co.com.juanjogv.lms.application.dto.book.AddBookRequest;
 import co.com.juanjogv.lms.application.service.AuthorService;
 import co.com.juanjogv.lms.application.usecase.book.AddBookUseCase;
 import co.com.juanjogv.lms.common.UseCase;
 import co.com.juanjogv.lms.domain.model.Author;
 import co.com.juanjogv.lms.domain.model.Book;
-import co.com.juanjogv.lms.domain.repository.AuthorRepository;
 import co.com.juanjogv.lms.domain.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
