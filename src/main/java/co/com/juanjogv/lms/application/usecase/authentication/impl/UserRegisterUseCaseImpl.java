@@ -1,9 +1,9 @@
-package co.com.juanjogv.lms.application.usecase.impl;
+package co.com.juanjogv.lms.application.usecase.authentication.impl;
 
-import co.com.juanjogv.lms.application.dto.AuthenticationResponse;
-import co.com.juanjogv.lms.application.dto.RegisterRequest;
+import co.com.juanjogv.lms.application.dto.authentication.AuthenticationResponse;
+import co.com.juanjogv.lms.application.dto.authentication.RegisterRequest;
 import co.com.juanjogv.lms.application.service.JwtService;
-import co.com.juanjogv.lms.application.usecase.UserRegisterUseCase;
+import co.com.juanjogv.lms.application.usecase.authentication.UserRegisterUseCase;
 import co.com.juanjogv.lms.common.UseCase;
 import co.com.juanjogv.lms.domain.model.Role;
 import co.com.juanjogv.lms.domain.model.User;

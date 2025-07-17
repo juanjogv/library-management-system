@@ -1,9 +1,9 @@
-package co.com.juanjogv.lms.application.usecase.impl;
+package co.com.juanjogv.lms.application.usecase.authentication.impl;
 
-import co.com.juanjogv.lms.application.dto.AuthenticationResponse;
-import co.com.juanjogv.lms.application.dto.LoginRequest;
+import co.com.juanjogv.lms.application.dto.authentication.AuthenticationResponse;
+import co.com.juanjogv.lms.application.dto.authentication.LoginRequest;
 import co.com.juanjogv.lms.application.service.JwtService;
-import co.com.juanjogv.lms.application.usecase.UserLoginUseCase;
+import co.com.juanjogv.lms.application.usecase.authentication.UserLoginUseCase;
 import co.com.juanjogv.lms.common.UseCase;
 import co.com.juanjogv.lms.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
