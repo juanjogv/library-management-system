@@ -1,5 +1,6 @@
 package co.com.juanjogv.lms.infrastructure.database.repository;
 
+import co.com.juanjogv.lms.domain.model.Role;
 import co.com.juanjogv.lms.domain.model.User;
 import co.com.juanjogv.lms.domain.projection.FindBorrowingRecordByUserIdProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +18,6 @@ public interface UserJpaRepository extends JpaRepository<User, UUID> {
 
     @Query("SELECT bk.title AS bookTitle, bk.isbn as bookIsbn, au.name as authorName FROM User us INNER JOIN us.borrowingRecord br INNER JOIN br.book bk INNER JOIN bk.author au WHERE us.id = :userId")
     List<FindBorrowingRecordByUserIdProjection> findBorrowingRecordByUserId(UUID userId);
+
+    List<User> findByRole(Role role);
 }

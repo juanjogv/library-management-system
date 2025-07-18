@@ -1,5 +1,6 @@
 package co.com.juanjogv.lms.infrastructure.database.repository;
 
+import co.com.juanjogv.lms.domain.model.Role;
 import co.com.juanjogv.lms.domain.model.User;
 import co.com.juanjogv.lms.domain.projection.FindBorrowingRecordByUserIdProjection;
 import co.com.juanjogv.lms.domain.repository.UserRepository;
@@ -33,6 +34,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public void saveAll(List<User> user) {
+        userJpaRepository.saveAll(user);
+    }
+
+    @Override
     public void delete(UUID id) {
         userJpaRepository.deleteById(id);
     }
@@ -50,6 +56,11 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> findById(UUID id) {
         return userJpaRepository.findById(id);
+    }
+
+    @Override
+    public List<User> findByRole(Role role) {
+        return userJpaRepository.findByRole(role);
     }
 
     @Override

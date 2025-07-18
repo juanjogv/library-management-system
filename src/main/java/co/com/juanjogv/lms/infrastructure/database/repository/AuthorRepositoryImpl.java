@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -22,5 +23,20 @@ public class AuthorRepositoryImpl implements AuthorRepository {
     @Override
     public Optional<Author> findByName(String name) {
         return authorJpaRepository.findByName(name);
+    }
+
+    @Override
+    public long count() {
+        return authorJpaRepository.count();
+    }
+
+    @Override
+    public void saveAll(List<Author> authors) {
+        authorJpaRepository.saveAll(authors);
+    }
+
+    @Override
+    public List<Author> findAll() {
+        return authorJpaRepository.findAll();
     }
 }

@@ -1,5 +1,6 @@
 package co.com.juanjogv.lms.domain.repository;
 
+import co.com.juanjogv.lms.domain.model.Role;
 import co.com.juanjogv.lms.domain.model.User;
 import co.com.juanjogv.lms.domain.projection.FindBorrowingRecordByUserIdProjection;
 
@@ -9,9 +10,16 @@ import java.util.UUID;
 
 public interface UserRepository extends HibernateCustomPagingAndSortingRepository<User, UUID> {
 
+    @Override
+    default Class<User> getEntityClass() {
+        return User.class;
+    }
+
     List<FindBorrowingRecordByUserIdProjection> findBorrowingRecordByUserId(UUID userId);
 
     void save(User user);
+
+    void saveAll(List<User> user);
 
     void delete(UUID id);
 
@@ -21,8 +29,5 @@ public interface UserRepository extends HibernateCustomPagingAndSortingRepositor
 
     Optional<User> findById(UUID id);
 
-    @Override
-    default Class<User> getEntityClass() {
-        return User.class;
-    }
+    List<User> findByRole(Role role);
 }
