@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,6 +46,7 @@ public class BookController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get all books", description = "Retrieve all books")
+    @Secured({"ROLE_USER", "ROLE_LIBRARIAN","ROLE_ADMIN"})
     public ResponseEntity<Page<GetAllBooksResponse>> getAllBooks(@RequestParam Map<String, String> searchParams) {
         Pageable pageable = pagingService.mapToPageable(searchParams);
         return ResponseEntity.ok(getAllBooksUseCase.handle(pageable));
@@ -52,6 +54,7 @@ public class BookController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create book", description = "Add a new book")
+    @Secured({"ROLE_LIBRARIAN","ROLE_ADMIN"})
     public ResponseEntity<Void> addBook(@Valid @RequestBody AddBookRequest addBookRequest) {
         UUID uuid = addBookUseCase.handle(addBookRequest);
         return ResponseEntity.created(
@@ -64,12 +67,14 @@ public class BookController {
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get book by ID", description = "Retrieve a specific book by ID")
+    @Secured({"ROLE_USER", "ROLE_LIBRARIAN","ROLE_ADMIN"})
     public ResponseEntity<GetBookByIdResponse> getBookById(@PathVariable UUID id) {
         return ResponseEntity.ok(getBookByIdUseCase.handle(id));
     }
 
     @DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Delete book by ID", description = "Deletes a specific book by its ID")
+    @Secured({"ROLE_LIBRARIAN","ROLE_ADMIN"})
     public ResponseEntity<Void> deleteBookById(@PathVariable UUID id) {
         deleteBookByIdUseCase.handle(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

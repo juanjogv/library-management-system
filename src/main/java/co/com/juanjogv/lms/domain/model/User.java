@@ -1,5 +1,6 @@
 package co.com.juanjogv.lms.domain.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -19,6 +20,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -55,7 +57,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<BorrowingRecord> borrowingRecord;
 
     @Override
@@ -81,12 +83,16 @@ public class User implements UserDetails {
         return getCurrentBooks().anyMatch(e -> e.getBook().getId().equals(bookId));
     }
 
+    public boolean hasBooks() {
+        return getCurrentBooks().findFirst().isPresent();
+    }
+
     public void returnBook(UUID bookId) {
         getCurrentBooks()
                 .filter(e -> e.getBook().getId().equals(bookId))
                 .findFirst()
                 .ifPresent(bookRecord -> {
-                    bookRecord.setReturnedDate(OffsetDateTime.now());
+                    bookRecord.setReturnedDate(LocalDate.now());
 
                     final var book = bookRecord.getBook();
                     book.returnBook();

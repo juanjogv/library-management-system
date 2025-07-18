@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -400,8 +400,8 @@ public class DatabaseSeeder implements CommandLineRunner {
             Book book = borrowedBooks.get(i);
             User borrower = regularUsers.get(i % regularUsers.size());
 
-            OffsetDateTime borrowDate = OffsetDateTime.now().minusDays(i + 1);
-            OffsetDateTime dueDate = borrowDate.plusDays(14); // 14 días de préstamo
+            LocalDate borrowDate = LocalDate.now().minusDays(i + 1);
+            LocalDate dueDate = borrowDate.plusDays(14); // 14 días de préstamo
 
             BorrowingRecord record = BorrowingRecord.builder()
                     .book(book)
@@ -420,9 +420,9 @@ public class DatabaseSeeder implements CommandLineRunner {
             Book book = availableBooks.get(i);
             User borrower = regularUsers.get(i % regularUsers.size());
 
-            OffsetDateTime borrowDate = OffsetDateTime.now().minusDays(20 + i);
-            OffsetDateTime dueDate = borrowDate.plusDays(14);
-            OffsetDateTime returnDate = OffsetDateTime.now().minusDays(5 + i);
+            LocalDate borrowDate = LocalDate.now().minusDays(20 + i);
+            LocalDate dueDate = borrowDate.plusDays(14);
+            LocalDate returnDate = LocalDate.now().minusDays(5 + i);
 
             BorrowingRecord historicalRecord = BorrowingRecord.builder()
                     .book(book)
@@ -440,9 +440,9 @@ public class DatabaseSeeder implements CommandLineRunner {
             Book book = availableBooks.get(i + 5); // Usar libros diferentes
             User borrower = regularUsers.get(i);
 
-            OffsetDateTime borrowDate = OffsetDateTime.now().minusDays(30 + i);
-            OffsetDateTime dueDate = borrowDate.plusDays(14);
-            OffsetDateTime returnDate = OffsetDateTime.now().minusDays(3 + i);
+            LocalDate borrowDate = LocalDate.now().minusDays(30 + i);
+            LocalDate dueDate = borrowDate.plusDays(14);
+            LocalDate returnDate = LocalDate.now().minusDays(3 + i);
 
             BorrowingRecord overdueRecord = BorrowingRecord.builder()
                     .book(book)

@@ -17,7 +17,7 @@ import java.util.UUID;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(IllegalArgumentException.class)
+    @ExceptionHandler(exception = {IllegalArgumentException.class, IllegalStateException.class})
     public ResponseEntity<GenericExceptionResponse> handleNoSuchElementException(IllegalArgumentException ex) {
 
         final var badRequestError = HttpStatus.BAD_REQUEST;

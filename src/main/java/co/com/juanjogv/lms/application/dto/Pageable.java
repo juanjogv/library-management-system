@@ -7,4 +7,9 @@ public record Pageable(
         int size,
         List<QueryExpression> queryExpressions,
         List<Sort> sortList
-) {}
+) {
+
+    public boolean hasDefaultSort() {
+        return sortList.size() == 1 && sortList.getFirst().getBy().equals("id") && sortList.getFirst().getDirection().equals("desc");
+    }
+}

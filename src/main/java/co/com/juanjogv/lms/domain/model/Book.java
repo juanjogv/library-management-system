@@ -20,6 +20,7 @@ import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -67,7 +68,7 @@ public class Book implements Serializable {
         }
 
         final var newBorrowingPetition = BorrowingRecord.builder()
-                .borrowDate(OffsetDateTime.now())
+                .borrowDate(LocalDate.now())
                 .book(this)
                 .user(user)
                 .build();

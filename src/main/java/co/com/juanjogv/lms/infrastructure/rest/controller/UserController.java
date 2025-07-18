@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,7 +54,8 @@ public class UserController {
             summary = "Get all users",
             description = "Retrieves a list of all users registered in the system."
     )
-    public ResponseEntity<Page<FindAllUsersResponse>> getAllUsers(@RequestParam Map<String, String> searchParams) {
+    @Secured({"ROLE_LIBRARIAN","ROLE_ADMIN"})
+    public ResponseEntity<Page<FindAllUsersResponse>> findAllUsers(@RequestParam Map<String, String> searchParams) {
         Pageable pageable = pagingService.mapToPageable(searchParams);
         return ResponseEntity.ok(findAllUsersUseCase.handle(pageable));
     }
@@ -62,6 +65,7 @@ public class UserController {
             summary = "Get user by ID",
             description = "Retrieves detailed information for a specific user given their unique identifier (UUID)."
     )
+    @Secured({"ROLE_LIBRARIAN","ROLE_ADMIN"})
     public ResponseEntity<FindUserByIdResponse> getUserById(@PathVariable UUID userId) {
         return ResponseEntity.ok(findUserByIdUseCase.handle(userId));
     }
@@ -71,6 +75,7 @@ public class UserController {
             summary = "Delete user by ID",
             description = "Permanently deletes a user from the system using their unique identifier (UUID)."
     )
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Void> deleteUserById(@PathVariable UUID userId) {
         deleteUserByIdUseCase.handle(userId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
@@ -81,6 +86,7 @@ public class UserController {
             summary = "List all books borrowed by a user",
             description = "Returns the list of books borrowed by the user id."
     )
+    @Secured({"ROLE_USER", "ROLE_LIBRARIAN","ROLE_ADMIN"})
     public ResponseEntity<FindBorrowedBooksByUserIdResponse> getBorrowedBooks(@PathVariable UUID userId) {
         return ResponseEntity.ok(findBorrowedBooksByUserIdUseCase.handle(userId));
     }
@@ -90,6 +96,7 @@ public class UserController {
             summary = "List all current borrowed books by a user",
             description = "Returns the list of current borrowed books borrowed by the user id."
     )
+    @Secured({"ROLE_USER", "ROLE_LIBRARIAN","ROLE_ADMIN"})
     public ResponseEntity<FindCurrentBorrowedBooksByUserIdResponse> getCurrentBorrowedBooks(@PathVariable UUID userId) {
         return ResponseEntity.ok(findCurrentBorrowedBooksByUserIdUseCase.handle(userId));
     }
@@ -99,6 +106,7 @@ public class UserController {
             summary = "Borrow a book for a user",
             description = "Assigns a specific book to a user, marking it as borrowed. Requires both the user and book identifiers."
     )
+    @Secured({"ROLE_LIBRARIAN","ROLE_ADMIN"})
     public ResponseEntity<Void> borrowBook(@PathVariable UUID userId, @PathVariable UUID bookId) {
         userBorrowBookUseCase.handle(userId, bookId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();
@@ -109,6 +117,7 @@ public class UserController {
             summary = "Return a borrowed book",
             description = "Registers the return of a book previously borrowed by a user. Requires both the user and book identifiers."
     )
+    @Secured({"ROLE_LIBRARIAN","ROLE_ADMIN"})
     public ResponseEntity<Void> returnBook(@PathVariable UUID userId, @PathVariable UUID bookId) {
         userReturnBookUseCase.handle(userId, bookId);
         return ResponseEntity.status(HttpStatus.ACCEPTED).build();

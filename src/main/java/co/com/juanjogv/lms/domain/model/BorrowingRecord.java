@@ -17,6 +17,7 @@ import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -37,7 +38,7 @@ public class BorrowingRecord implements Serializable {
     @Column(name = "id")
     private UUID id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "book_id")
     private Book book;
 
@@ -46,12 +47,12 @@ public class BorrowingRecord implements Serializable {
     private User user;
 
     @Column(name = "borrowDate")
-    private OffsetDateTime borrowDate;
+    private LocalDate borrowDate;
 
     @Column(name = "dueDate")
-    private OffsetDateTime dueDate;
+    private LocalDate dueDate;
 
     @Column(name = "returnedDate")
-    private OffsetDateTime returnedDate;
+    private LocalDate returnedDate;
 
 }

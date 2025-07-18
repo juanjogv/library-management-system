@@ -4,6 +4,7 @@ import co.com.juanjogv.lms.domain.model.Role;
 import co.com.juanjogv.lms.domain.model.User;
 import co.com.juanjogv.lms.domain.projection.FindBorrowingRecordByUserIdProjection;
 import co.com.juanjogv.lms.domain.projection.FindCurrentBorrowedBooksByUserIdProjection;
+import co.com.juanjogv.lms.domain.projection.FindUsersWithOverdueBooksProjection;
 import co.com.juanjogv.lms.domain.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -67,5 +68,10 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public List<User> findByRole(Role role) {
         return userJpaRepository.findByRole(role);
+    }
+
+    @Override
+    public List<FindUsersWithOverdueBooksProjection> findUsersWithOverdueBooks() {
+        return userJpaRepository.findUsersWithOverdueBooks();
     }
 }

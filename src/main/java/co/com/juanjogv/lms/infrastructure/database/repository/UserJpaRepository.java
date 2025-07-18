@@ -4,6 +4,7 @@ import co.com.juanjogv.lms.domain.model.Role;
 import co.com.juanjogv.lms.domain.model.User;
 import co.com.juanjogv.lms.domain.projection.FindBorrowingRecordByUserIdProjection;
 import co.com.juanjogv.lms.domain.projection.FindCurrentBorrowedBooksByUserIdProjection;
+import co.com.juanjogv.lms.domain.projection.FindUsersWithOverdueBooksProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -22,6 +23,9 @@ public interface UserJpaRepository extends JpaRepository<User, UUID> {
 
     @Query("SELECT bk.id as id, bk.title AS bookTitle, bk.isbn as bookIsbn, au.name as authorName FROM User us INNER JOIN us.borrowingRecord br INNER JOIN br.book bk INNER JOIN bk.author au WHERE us.id = :userId AND br.returnedDate IS NULL")
     List<FindCurrentBorrowedBooksByUserIdProjection> findCurrentBorrowedBooksByUserId(UUID userId);
+
+    @Query("SELECT us.name as userName, us.email AS userEmail, bk.title as bookTitle FROM User us INNER JOIN us.borrowingRecord br INNER JOIN br.book bk WHERE br.returnedDate IS NULL AND br.dueDate < local_date ")
+    List<FindUsersWithOverdueBooksProjection> findUsersWithOverdueBooks();
 
     List<User> findByRole(Role role);
 }

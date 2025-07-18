@@ -8,6 +8,7 @@ import co.com.juanjogv.lms.common.UseCase;
 import co.com.juanjogv.lms.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,11 @@ public class FindAllUsersUseCaseImpl implements FindAllUsersUseCase {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
+    @Cacheable(
+            cacheNames = "users",
+            condition = "#pageable.queryExpressions().isEmpty() && #pageable.hasDefaultSort()",
+            unless = "#result.content().size() > 20"
+    )
     public Page<FindAllUsersResponse> handle(Pageable pageable) {
         return userRepository.findAll(pageable, FindAllUsersResponse.class);
     }

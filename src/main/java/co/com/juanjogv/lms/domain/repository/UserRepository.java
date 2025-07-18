@@ -4,6 +4,7 @@ import co.com.juanjogv.lms.domain.model.Role;
 import co.com.juanjogv.lms.domain.model.User;
 import co.com.juanjogv.lms.domain.projection.FindBorrowingRecordByUserIdProjection;
 import co.com.juanjogv.lms.domain.projection.FindCurrentBorrowedBooksByUserIdProjection;
+import co.com.juanjogv.lms.domain.projection.FindUsersWithOverdueBooksProjection;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,4 +34,6 @@ public interface UserRepository extends HibernateCustomPagingAndSortingRepositor
     Optional<User> findById(UUID id);
 
     List<User> findByRole(Role role);
+
+    List<FindUsersWithOverdueBooksProjection> findUsersWithOverdueBooks();
 }
