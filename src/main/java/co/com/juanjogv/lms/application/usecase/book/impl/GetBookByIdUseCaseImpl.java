@@ -7,6 +7,8 @@ import co.com.juanjogv.lms.domain.model.Book;
 import co.com.juanjogv.lms.domain.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -18,13 +20,14 @@ public class GetBookByIdUseCaseImpl implements GetBookByIdUseCase {
     private final BookRepository bookRepository;
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public GetBookByIdResponse handle(UUID id) {
         return bookRepository.findById(id)
                 .map(this::toGetBookByIdResponse)
                 .orElseThrow(() -> new NoSuchElementException("Cannot found a book with id %s".formatted(id)));
     }
 
-    public GetBookByIdResponse toGetBookByIdResponse(Book book){
+    public GetBookByIdResponse toGetBookByIdResponse(Book book) {
         return new GetBookByIdResponse(
                 book.getId(),
                 book.getTitle(),

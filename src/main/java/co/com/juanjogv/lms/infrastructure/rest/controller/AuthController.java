@@ -1,10 +1,10 @@
 package co.com.juanjogv.lms.infrastructure.rest.controller;
 
-import co.com.juanjogv.lms.application.dto.AuthenticationResponse;
-import co.com.juanjogv.lms.application.dto.LoginRequest;
-import co.com.juanjogv.lms.application.dto.RegisterRequest;
-import co.com.juanjogv.lms.application.usecase.UserLoginUseCase;
-import co.com.juanjogv.lms.application.usecase.UserRegisterUseCase;
+import co.com.juanjogv.lms.application.dto.authentication.AuthenticationResponse;
+import co.com.juanjogv.lms.application.dto.authentication.LoginRequest;
+import co.com.juanjogv.lms.application.dto.authentication.RegisterRequest;
+import co.com.juanjogv.lms.application.usecase.authentication.UserLoginUseCase;
+import co.com.juanjogv.lms.application.usecase.authentication.UserRegisterUseCase;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

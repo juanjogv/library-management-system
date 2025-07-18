@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +17,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -26,6 +29,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Book {
+
+    public static final int MAXIMUM_BORROWABLE_BOOKS = 2;
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -46,4 +51,24 @@ public class Book {
     @JoinColumn(name = "author_id", nullable = false)
     private Author author;
 
+    @OneToMany(mappedBy = "book")
+    private List<BorrowingRecord> borrowingRecord;
+
+    public void borrowBook(UUID userId){
+
+        if (!BookAvailability.AVAILABLE.equals(this.availability)) {
+            throw new IllegalStateException("The book is not available.");
+        }
+
+        final var newBorrowingPetition = BorrowingRecord.builder()
+                .id(new BorrowingRecordKey(this.id, userId))
+                .borrowDate(OffsetDateTime.now())
+                .build();
+
+        this.borrowingRecord.add(newBorrowingPetition);
+    }
+
+    public void returnBook(){
+        this.setAvailability(BookAvailability.AVAILABLE);
+    }
 }
