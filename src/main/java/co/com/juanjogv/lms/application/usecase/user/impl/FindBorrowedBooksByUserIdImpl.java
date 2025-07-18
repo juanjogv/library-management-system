@@ -8,6 +8,7 @@ import co.com.juanjogv.lms.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -20,18 +21,20 @@ public class FindBorrowedBooksByUserIdImpl implements FindBorrowedBooksByUserId 
     @Override
     public FindBorrowedBooksByUserIdResponse handle(UUID userId) {
         return userRepository.findBorrowingRecordByUserId(userId).stream()
-                .map(this::mapToFindBorrowedBooksByUserIdResponse)
+                .map(this::book)
                 .collect(Collectors.collectingAndThen(
                         Collectors.toList(),
                         FindBorrowedBooksByUserIdResponse::new
                 ));
     }
 
-    private FindBorrowedBooksByUserIdResponse.Book mapToFindBorrowedBooksByUserIdResponse(FindBorrowingRecordByUserIdProjection source) {
+    private FindBorrowedBooksByUserIdResponse.Book book(FindBorrowingRecordByUserIdProjection source) {
         return new FindBorrowedBooksByUserIdResponse.Book(
+                source.getId(),
                 source.getBookTitle(),
                 source.getAuthorName(),
-                source.getBookIsbn()
+                source.getBookIsbn(),
+                Objects.isNull(source.getReturnedDate())
         );
     }
 }

@@ -78,14 +78,12 @@ public class User implements UserDetails {
     }
 
     public boolean hasBook(UUID bookId) {
-        return getCurrentBooks().filter(e -> e.getId().getBookId().equals(bookId))
-                .findFirst()
-                .isEmpty();
+        return getCurrentBooks().anyMatch(e -> e.getBook().getId().equals(bookId));
     }
 
     public void returnBook(UUID bookId) {
         getCurrentBooks()
-                .filter(e -> e.getId().getBookId().equals(bookId))
+                .filter(e -> e.getBook().getId().equals(bookId))
                 .findFirst()
                 .ifPresent(bookRecord -> {
                     bookRecord.setReturnedDate(OffsetDateTime.now());

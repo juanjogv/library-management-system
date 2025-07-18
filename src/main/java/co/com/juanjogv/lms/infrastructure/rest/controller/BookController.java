@@ -43,7 +43,6 @@ public class BookController {
     private final GetBookByIdUseCase getBookByIdUseCase;
     private final DeleteBookByIdUseCase deleteBookByIdUseCase;
 
-
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get all books", description = "Retrieve all books")
     public ResponseEntity<Page<GetAllBooksResponse>> getAllBooks(@RequestParam Map<String, String> searchParams) {

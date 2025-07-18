@@ -4,11 +4,13 @@ import co.com.juanjogv.lms.application.dto.Page;
 import co.com.juanjogv.lms.application.dto.Pageable;
 import co.com.juanjogv.lms.application.dto.user.FindAllUsersResponse;
 import co.com.juanjogv.lms.application.dto.user.FindBorrowedBooksByUserIdResponse;
+import co.com.juanjogv.lms.application.dto.user.FindCurrentBorrowedBooksByUserIdResponse;
 import co.com.juanjogv.lms.application.dto.user.FindUserByIdResponse;
 import co.com.juanjogv.lms.application.service.PagingService;
 import co.com.juanjogv.lms.application.usecase.user.DeleteUserByIdUseCase;
 import co.com.juanjogv.lms.application.usecase.user.FindAllUsersUseCase;
 import co.com.juanjogv.lms.application.usecase.user.FindBorrowedBooksByUserId;
+import co.com.juanjogv.lms.application.usecase.user.FindCurrentBorrowedBooksByUserIdUseCase;
 import co.com.juanjogv.lms.application.usecase.user.FindUserByIdUseCase;
 import co.com.juanjogv.lms.application.usecase.user.UserBorrowBookUseCase;
 import co.com.juanjogv.lms.application.usecase.user.UserReturnBookUseCase;
@@ -27,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -42,6 +43,7 @@ public class UserController {
     private final FindUserByIdUseCase findUserByIdUseCase;
     private final DeleteUserByIdUseCase deleteUserByIdUseCase;
     private final FindBorrowedBooksByUserId findBorrowedBooksByUserIdUseCase;
+    private final FindCurrentBorrowedBooksByUserIdUseCase findCurrentBorrowedBooksByUserIdUseCase;
     private final UserBorrowBookUseCase userBorrowBookUseCase;
     private final UserReturnBookUseCase userReturnBookUseCase;
 
@@ -76,11 +78,20 @@ public class UserController {
 
     @GetMapping(path = "/{userId}/books")
     @Operation(
-            summary = "List books borrowed by a user",
-            description = "Returns the list of books currently borrowed by the user identified by their UUID."
+            summary = "List all books borrowed by a user",
+            description = "Returns the list of books borrowed by the user id."
     )
     public ResponseEntity<FindBorrowedBooksByUserIdResponse> getBorrowedBooks(@PathVariable UUID userId) {
         return ResponseEntity.ok(findBorrowedBooksByUserIdUseCase.handle(userId));
+    }
+
+    @GetMapping(path = "/{userId}/books/borrowed")
+    @Operation(
+            summary = "List all current borrowed books by a user",
+            description = "Returns the list of current borrowed books borrowed by the user id."
+    )
+    public ResponseEntity<FindCurrentBorrowedBooksByUserIdResponse> getCurrentBorrowedBooks(@PathVariable UUID userId) {
+        return ResponseEntity.ok(findCurrentBorrowedBooksByUserIdUseCase.handle(userId));
     }
 
     @PutMapping(path = "/{userId}/borrow/books/{bookId}")

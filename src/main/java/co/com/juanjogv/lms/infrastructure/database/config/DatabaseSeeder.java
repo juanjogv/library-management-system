@@ -4,7 +4,6 @@ import co.com.juanjogv.lms.domain.model.Author;
 import co.com.juanjogv.lms.domain.model.Book;
 import co.com.juanjogv.lms.domain.model.BookAvailability;
 import co.com.juanjogv.lms.domain.model.BorrowingRecord;
-import co.com.juanjogv.lms.domain.model.BorrowingRecordKey;
 import co.com.juanjogv.lms.domain.model.Role;
 import co.com.juanjogv.lms.domain.model.User;
 import co.com.juanjogv.lms.domain.repository.AuthorRepository;
@@ -405,7 +404,6 @@ public class DatabaseSeeder implements CommandLineRunner {
             OffsetDateTime dueDate = borrowDate.plusDays(14); // 14 días de préstamo
 
             BorrowingRecord record = BorrowingRecord.builder()
-                    .id(new BorrowingRecordKey(book.getId(), borrower.getId()))
                     .book(book)
                     .user(borrower)
                     .borrowDate(borrowDate)
@@ -427,7 +425,6 @@ public class DatabaseSeeder implements CommandLineRunner {
             OffsetDateTime returnDate = OffsetDateTime.now().minusDays(5 + i);
 
             BorrowingRecord historicalRecord = BorrowingRecord.builder()
-                    .id(new BorrowingRecordKey(book.getId(), borrower.getId()))
                     .book(book)
                     .user(borrower)
                     .borrowDate(borrowDate)
@@ -448,7 +445,6 @@ public class DatabaseSeeder implements CommandLineRunner {
             OffsetDateTime returnDate = OffsetDateTime.now().minusDays(3 + i);
 
             BorrowingRecord overdueRecord = BorrowingRecord.builder()
-                    .id(new BorrowingRecordKey(book.getId(), borrower.getId()))
                     .book(book)
                     .user(borrower)
                     .borrowDate(borrowDate)

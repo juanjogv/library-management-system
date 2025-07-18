@@ -7,7 +7,6 @@ import co.com.juanjogv.lms.common.util.CriteriaUtil;
 import co.com.juanjogv.lms.common.util.EntityUtil;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import org.hibernate.StatelessSession;
 import org.hibernate.query.Query;
 import org.hibernate.query.criteria.HibernateCriteriaBuilder;
@@ -39,7 +38,7 @@ public interface HibernateCustomPagingAndSortingRepository<T, ID> extends Hibern
      * @return The {@link StatelessSession} instance.
      */
     default StatelessSession getStatelessSession() {
-        return getSession().getSessionFactory().withStatelessOptions().openStatelessSession();
+        return getSessionFactory().withStatelessOptions().openStatelessSession();
     }
 
     /**
@@ -51,34 +50,36 @@ public interface HibernateCustomPagingAndSortingRepository<T, ID> extends Hibern
      * @throws NullPointerException if the page request is {@code null}.
      */
     default Page<T> findAll(Pageable pageable) {
-        HibernateCriteriaBuilder cb = getStatelessSession().getCriteriaBuilder();
-        JpaCriteriaQuery<T> cq = cb.createQuery(getEntityClass());
-        JpaRoot<T> root = cq.from(getEntityClass());
+        try (StatelessSession session = getStatelessSession()) {
+            HibernateCriteriaBuilder cb = session.getCriteriaBuilder();
+            JpaCriteriaQuery<T> cq = cb.createQuery(getEntityClass());
+            JpaRoot<T> root = cq.from(getEntityClass());
 
-        cq.select(root);
+            cq.select(root);
 
-        Predicate[] predicates = createCriteriaPredicates(cb, root, pageable);
-        cq.where(predicates);
+            Predicate[] predicates = createCriteriaPredicates(cb, root, pageable);
+            cq.where(predicates);
 
-        cq.orderBy(cb.asc(root.get("id")));
+            cq.orderBy(cb.asc(root.get("id")));
 
-        Query<T> query = getStatelessSession().createQuery(cq)
-                .setFirstResult(pageable.size() * pageable.page())
-                .setMaxResults(pageable.size());
+            Query<T> query = session.createQuery(cq)
+                    .setFirstResult(pageable.size() * pageable.page())
+                    .setMaxResults(pageable.size());
 
-        Query<Long> countQuery = createCountQuery(pageable);
-        long totalRows = countQuery.getSingleResult();
-        long totalPages = totalRows / pageable.size();
-        boolean hasPrevious = pageable.page() > 0;
-        boolean hasNext = pageable.page() < totalPages;
+            Query<Long> countQuery = createCountQuery(session, pageable);
+            long totalRows = countQuery.getSingleResult();
+            long totalPages = totalRows / pageable.size();
+            boolean hasPrevious = pageable.page() > 0;
+            boolean hasNext = pageable.page() < totalPages;
 
-        return Page.<T>builder()
-                .content(query.getResultList())
-                .totalElements(totalRows)
-                .totalPages(totalPages)
-                .hasPrevious(hasPrevious)
-                .hasNext(hasNext)
-                .build();
+            return Page.<T>builder()
+                    .content(query.getResultList())
+                    .totalElements(totalRows)
+                    .totalPages(totalPages)
+                    .hasPrevious(hasPrevious)
+                    .hasNext(hasNext)
+                    .build();
+        }
     }
 
     /**
@@ -92,34 +93,35 @@ public interface HibernateCustomPagingAndSortingRepository<T, ID> extends Hibern
      * @throws NullPointerException if the page request or projection class is {@code null}.
      */
     default <P> Page<P> findAll(Pageable pageable, Class<P> projectionClass) {
+        try (StatelessSession session = getStatelessSession()) {
+            HibernateCriteriaBuilder cb = session.getCriteriaBuilder();
+            JpaCriteriaQuery<P> cq = cb.createQuery(projectionClass);
+            JpaRoot<T> root = cq.from(getEntityClass());
+            CriteriaUtil.buildCriteriaQuery(cb, cq, root);
 
-        HibernateCriteriaBuilder cb = getStatelessSession().getCriteriaBuilder();
-        JpaCriteriaQuery<P> cq = cb.createQuery(projectionClass);
-        JpaRoot<T> root = cq.from(getEntityClass());
-        CriteriaUtil.buildCriteriaQuery(cb, cq, root);
+            Predicate[] predicates = createCriteriaPredicates(cb, root, pageable);
+            cq.where(predicates);
 
-        Predicate[] predicates = createCriteriaPredicates(cb, root, pageable);
-        cq.where(predicates);
+            cq.orderBy(cb.asc(root.get("id")));
 
-        cq.orderBy(cb.asc(root.get("id")));
+            Query<P> query = session.createQuery(cq)
+                    .setFirstResult(pageable.size() * pageable.page())
+                    .setMaxResults(pageable.size());
 
-        Query<P> query = getStatelessSession().createQuery(cq)
-                .setFirstResult(pageable.size() * pageable.page())
-                .setMaxResults(pageable.size());
+            Query<Long> countQuery = createCountQuery(session, pageable);
+            long totalRows = countQuery.getSingleResult();
+            long totalPages = totalRows / pageable.size();
+            boolean hasPrevious = pageable.page() > 0;
+            boolean hasNext = pageable.page() < totalPages;
 
-        Query<Long> countQuery = createCountQuery(pageable);
-        long totalRows = countQuery.getSingleResult();
-        long totalPages = totalRows / pageable.size();
-        boolean hasPrevious = pageable.page() > 0;
-        boolean hasNext = pageable.page() < totalPages;
-
-        return Page.<P>builder()
-                .content(query.getResultList())
-                .totalElements(totalRows)
-                .totalPages(totalPages)
-                .hasPrevious(hasPrevious)
-                .hasNext(hasNext)
-                .build();
+            return Page.<P>builder()
+                    .content(query.getResultList())
+                    .totalElements(totalRows)
+                    .totalPages(totalPages)
+                    .hasPrevious(hasPrevious)
+                    .hasNext(hasNext)
+                    .build();
+        }
     }
 
     /**
@@ -183,8 +185,8 @@ public interface HibernateCustomPagingAndSortingRepository<T, ID> extends Hibern
      * @param pageable The page request containing the query expressions.
      * @return A {@link Query} that returns the total count of entities.
      */
-    private Query<Long> createCountQuery(Pageable pageable) {
-        HibernateCriteriaBuilder cb = getStatelessSession().getCriteriaBuilder();
+    private Query<Long> createCountQuery(StatelessSession session, Pageable pageable) {
+        HibernateCriteriaBuilder cb = session.getCriteriaBuilder();
         JpaCriteriaQuery<Long> cq = cb.createQuery(Long.class);
         JpaRoot<T> root = cq.from(getEntityClass());
 
@@ -194,6 +196,6 @@ public interface HibernateCustomPagingAndSortingRepository<T, ID> extends Hibern
         Predicate[] predicates = createCriteriaPredicates(cb, root, pageable);
         cq.where(predicates);
 
-        return getStatelessSession().createQuery(cq);
+        return session.createQuery(cq);
     }
 }

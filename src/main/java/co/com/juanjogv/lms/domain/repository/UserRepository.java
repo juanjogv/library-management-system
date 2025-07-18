@@ -3,6 +3,7 @@ package co.com.juanjogv.lms.domain.repository;
 import co.com.juanjogv.lms.domain.model.Role;
 import co.com.juanjogv.lms.domain.model.User;
 import co.com.juanjogv.lms.domain.projection.FindBorrowingRecordByUserIdProjection;
+import co.com.juanjogv.lms.domain.projection.FindCurrentBorrowedBooksByUserIdProjection;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +17,8 @@ public interface UserRepository extends HibernateCustomPagingAndSortingRepositor
     }
 
     List<FindBorrowingRecordByUserIdProjection> findBorrowingRecordByUserId(UUID userId);
+
+    List<FindCurrentBorrowedBooksByUserIdProjection> findCurrentBorrowedBooksByUserId(UUID userId);
 
     void save(User user);
 
