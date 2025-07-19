@@ -21,6 +21,13 @@ public class DeleteUserByIdUseCaseImpl implements DeleteUserByIdUseCase {
     @Transactional(propagation = Propagation.REQUIRED)
     @CacheEvict(cacheNames = "users", allEntries = true)
     public void handle(UUID userId) {
-        userRepository.delete(userId);
+        userRepository.findById(userId)
+                .ifPresent(user -> {
+                    if (user.hasBooks()) {
+                        throw new IllegalArgumentException("User can't be deleted as he still has borrowed books");
+                    }
+
+                    userRepository.delete(userId);
+                });
     }
 }

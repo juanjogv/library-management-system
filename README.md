@@ -13,7 +13,7 @@ A Spring Boot-based Library Management System for managing users, books, and bor
 ## Getting Started
 
 ### Prerequisites
-- Java 21 or higher (project uses Java 24 in pom.xml, but ensure compatibility)
+- Java 24 or higher
 - Maven 3.8+
 
 ### Setup
