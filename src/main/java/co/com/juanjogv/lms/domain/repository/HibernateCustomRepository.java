@@ -2,8 +2,13 @@ package co.com.juanjogv.lms.domain.repository;
 
 import co.com.juanjogv.lms.domain.CustomRepository;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
 public interface HibernateCustomRepository<T, ID> extends CustomRepository<T, ID> {
+
+    default SessionFactory getSessionFactory(){
+        return getSession().getSessionFactory();
+    }
 
     default Session getSession() {
         return getEntityManager().unwrap(Session.class);

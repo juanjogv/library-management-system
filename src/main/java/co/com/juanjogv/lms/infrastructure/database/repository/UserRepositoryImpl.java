@@ -1,10 +1,14 @@
 package co.com.juanjogv.lms.infrastructure.database.repository;
 
+import co.com.juanjogv.lms.domain.model.Role;
 import co.com.juanjogv.lms.domain.model.User;
 import co.com.juanjogv.lms.domain.projection.FindBorrowingRecordByUserIdProjection;
+import co.com.juanjogv.lms.domain.projection.FindCurrentBorrowedBooksByUserIdProjection;
+import co.com.juanjogv.lms.domain.projection.FindUsersWithOverdueBooksProjection;
 import co.com.juanjogv.lms.domain.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -17,10 +21,9 @@ import java.util.UUID;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class UserRepositoryImpl implements UserRepository {
 
+    @Getter
+    private final  EntityManager entityManager;
     private final UserJpaRepository userJpaRepository;
-
-    @PersistenceContext
-    EntityManager entityManager;
 
     @Override
     public List<FindBorrowingRecordByUserIdProjection> findBorrowingRecordByUserId(UUID userId) {
@@ -28,8 +31,18 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public List<FindCurrentBorrowedBooksByUserIdProjection> findCurrentBorrowedBooksByUserId(UUID userId) {
+        return userJpaRepository.findCurrentBorrowedBooksByUserId(userId);
+    }
+
+    @Override
     public void save(User user) {
         userJpaRepository.save(user);
+    }
+
+    @Override
+    public void saveAll(List<User> user) {
+        userJpaRepository.saveAll(user);
     }
 
     @Override
@@ -53,7 +66,12 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public EntityManager getEntityManager() {
-        return entityManager;
+    public List<User> findByRole(Role role) {
+        return userJpaRepository.findByRole(role);
+    }
+
+    @Override
+    public List<FindUsersWithOverdueBooksProjection> findUsersWithOverdueBooks() {
+        return userJpaRepository.findUsersWithOverdueBooks();
     }
 }

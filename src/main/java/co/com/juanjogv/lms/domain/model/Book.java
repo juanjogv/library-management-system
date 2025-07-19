@@ -1,5 +1,6 @@
 package co.com.juanjogv.lms.domain.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,6 +18,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -28,7 +32,10 @@ import java.util.UUID;
 @Table(name = "book")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Book {
+public class Book implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 4684313529681812179L;
 
     public static final int MAXIMUM_BORROWABLE_BOOKS = 2;
 
@@ -51,24 +58,26 @@ public class Book {
     @JoinColumn(name = "author_id", nullable = false)
     private Author author;
 
-    @OneToMany(mappedBy = "book")
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     private List<BorrowingRecord> borrowingRecord;
 
-    public void borrowBook(UUID userId){
+    public void borrowBook(User user) {
 
         if (!BookAvailability.AVAILABLE.equals(this.availability)) {
             throw new IllegalStateException("The book is not available.");
         }
 
         final var newBorrowingPetition = BorrowingRecord.builder()
-                .id(new BorrowingRecordKey(this.id, userId))
-                .borrowDate(OffsetDateTime.now())
+                .borrowDate(LocalDate.now())
+                .book(this)
+                .user(user)
                 .build();
 
         this.borrowingRecord.add(newBorrowingPetition);
+        this.setAvailability(BookAvailability.BORROWED);
     }
 
-    public void returnBook(){
+    public void returnBook() {
         this.setAvailability(BookAvailability.AVAILABLE);
     }
 }

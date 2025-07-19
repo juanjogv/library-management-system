@@ -1,9 +1,8 @@
 package co.com.juanjogv.lms.domain.projection;
 
-import java.time.OffsetDateTime;
 import java.util.UUID;
 
-public interface FindBorrowingRecordByUserIdProjection {
+public interface FindCurrentBorrowedBooksByUserIdProjection {
 
     UUID getId();
 
@@ -12,7 +11,5 @@ public interface FindBorrowingRecordByUserIdProjection {
     String getBookIsbn();
 
     String getAuthorName();
-
-    OffsetDateTime getReturnedDate();
 
 }

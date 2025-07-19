@@ -5,6 +5,7 @@ import co.com.juanjogv.lms.common.UseCase;
 import co.com.juanjogv.lms.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +19,15 @@ public class DeleteUserByIdUseCaseImpl implements DeleteUserByIdUseCase {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
+    @CacheEvict(cacheNames = "users", allEntries = true)
     public void handle(UUID userId) {
-        userRepository.delete(userId);
+        userRepository.findById(userId)
+                .ifPresent(user -> {
+                    if (user.hasBooks()) {
+                        throw new IllegalArgumentException("User can't be deleted as he still has borrowed books");
+                    }
+
+                    userRepository.delete(userId);
+                });
     }
 }

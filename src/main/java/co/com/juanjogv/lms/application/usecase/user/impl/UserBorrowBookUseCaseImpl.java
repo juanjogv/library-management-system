@@ -37,7 +37,7 @@ public class UserBorrowBookUseCaseImpl implements UserBorrowBookUseCase {
         final var book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new NoSuchElementException("There is no book with id " + bookId));
 
-        book.borrowBook(userId);
+        book.borrowBook(user);
         bookRepository.save(book);
     }
 }
